@@ -190,6 +190,11 @@ function AddGame(...)
 
 	pcall(function() os.execute("rmdir /s /q \"" .. temp_dir .. "\"") end)
 
+	pcall(function()
+		local refresh = 'powershell -WindowStyle Hidden -NoProfile -Command "& {taskkill /f /im steamwebhelper.exe /fi \"STATUS eq RUNNING\" 2>$null; Start-Sleep 1}"'
+		utils.exec(refresh)
+	end)
+
 	return json_ok({
 		success = true,
 		appid = appid,
