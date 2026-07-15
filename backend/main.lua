@@ -191,15 +191,7 @@ function AddGame(...)
 	pcall(function() os.execute("rmdir /s /q \"" .. temp_dir .. "\"") end)
 
 	pcall(function()
-		local cmd = 'powershell -WindowStyle Hidden -NoProfile -Command "'
-		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-shutdown'' -Wait; '
-		cmd = cmd .. 'Start-Sleep 3; '
-		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-offline'' -Wait; '
-		cmd = cmd .. 'Start-Sleep 2; '
-		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-shutdown'' -Wait; '
-		cmd = cmd .. 'Start-Sleep 3; '
-		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-clearbeta''"'
-		utils.exec(cmd)
+		utils.exec('powershell -WindowStyle Hidden -NoProfile -Command "Start-Process ''steam://offline/''; Start-Sleep 2; Start-Process ''steam://connect/''"')
 	end)
 
 	return json_ok({
