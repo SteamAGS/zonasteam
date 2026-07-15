@@ -48,7 +48,7 @@ if ($rel) {
     Remove-Item $zip -Force
 } else {
     # Fallback: raw de GitHub
-    $raw = "https://raw.githubusercontent.com/SteamAGS/zonasteam/main"
+    $raw = "https://raw.githubusercontent.com/SteamAGS/zonasteam/master"
     $files = @(
         "plugin.json",
         "backend/main.lua",
