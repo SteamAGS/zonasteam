@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SteamClientHomebrew/Millennium/main/src/sys/plugin-schema.json",
+  "name": "zonasteam-plugin",
+  "common_name": "Zonasteam",
+  "description": "Genera manifests + Lua para OpenSteamTool directamente desde la tienda Steam",
+  "version": "0.1.0",
+  "backendType": "lua",
+  "useBackend": true,
+  "backend": "backend",
+  "webkitApiVersion": "2.0.0",
+  "include": ["public", "webkit"]
+}
