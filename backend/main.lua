@@ -173,9 +173,13 @@ function AddGame(...)
 	local back_dir = pdir .. "\\backend"
 	local depot_dir = steam .. "\\depotcache"
 	mkdirs(depot_dir)
-	local args = '--outdir "' .. temp_dir .. '" --depotdir "' .. depot_dir .. '" ' .. appid
-	local ps = 'powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath ' .. "'" .. bin_path .. "'" .. ' -ArgumentList ' .. "'" .. args .. "'" .. ' -WorkingDirectory ' .. "'" .. back_dir .. "'" .. ' -WindowStyle Hidden -Wait"'
-	pcall(utils.exec, ps)
+
+	local run_cmd = 'cd /d "' .. back_dir .. '" && "' .. bin_path .. '" --outdir "' .. temp_dir .. '" --depotdir "' .. depot_dir .. '" ' .. appid
+	pcall(utils.exec, 'mshta "javascript:new ActiveXObject(' .. "'" .. 'WScript.Shell' .. "'" .. ').Run(' .. "'" .. run_cmd .. "',0,true);close()"')
+	-- Si mshta falla, intentar con cmd oculto
+	if not is_file(temp_dir .. "\\" .. appid .. "\\" .. appid .. ".lua") then
+		os.execute("\"" .. bin_path .. "\" --outdir \"" .. temp_dir .. "\" --depotdir \"" .. depot_dir .. "\" " .. appid .. " >nul 2>&1")
+	end
 
 	local lua_src = temp_dir .. "\\" .. appid .. "\\" .. appid .. ".lua"
 	local lua_content = read_file(lua_src)
