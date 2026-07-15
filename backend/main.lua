@@ -191,8 +191,15 @@ function AddGame(...)
 	pcall(function() os.execute("rmdir /s /q \"" .. temp_dir .. "\"") end)
 
 	pcall(function()
-		local refresh = 'powershell -WindowStyle Hidden -NoProfile -Command "& {taskkill /f /im steamwebhelper.exe /fi \"STATUS eq RUNNING\" 2>$null; Start-Sleep 1}"'
-		utils.exec(refresh)
+		local cmd = 'powershell -WindowStyle Hidden -NoProfile -Command "'
+		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-shutdown'' -Wait; '
+		cmd = cmd .. 'Start-Sleep 3; '
+		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-offline'' -Wait; '
+		cmd = cmd .. 'Start-Sleep 2; '
+		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-shutdown'' -Wait; '
+		cmd = cmd .. 'Start-Sleep 3; '
+		cmd = cmd .. 'Start-Process ''' .. steam .. '\\steam.exe'' -ArgumentList ''-clearbeta''"'
+		utils.exec(cmd)
 	end)
 
 	return json_ok({
