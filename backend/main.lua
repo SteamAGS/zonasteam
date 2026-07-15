@@ -174,11 +174,7 @@ function AddGame(...)
 	local depot_dir = steam .. "\\depotcache"
 	mkdirs(depot_dir)
 
-	local run = "set __cd__=" .. back_dir .. "&&cd /d %__cd__%&&\"" .. bin_path .. "\" --outdir \"" .. temp_dir .. "\" --depotdir \"" .. depot_dir .. "\" " .. appid
-	local vbs = back_dir .. "\\temp\\run.vbs"
-	write_file(vbs, "CreateObject(\"WScript.Shell\").Run \"" .. run:gsub('"', '""') .. "\", 0, True")
-	utils.exec("cscript.exe //Nologo \"" .. vbs .. "\"")
-	pcall(function() os.remove(vbs) end)
+	utils.exec("cmd.exe /c \"\"" .. bin_path .. "\" --outdir \"" .. temp_dir .. "\" " .. appid .. "\"")
 
 	local lua_src = temp_dir .. "\\" .. appid .. "\\" .. appid .. ".lua"
 	local lua_content = read_file(lua_src)
@@ -190,6 +186,13 @@ function AddGame(...)
 	local lua_dir = steam .. "\\config\\stplug-in"
 	mkdirs(lua_dir)
 	write_file(lua_dir .. "\\" .. appid .. ".lua", lua_content)
+
+	local zip_path = temp_dir .. "\\" .. appid .. "\\" .. appid .. ".zip"
+	pcall(function()
+		local depot_dir = steam .. "\\depotcache"
+		mkdirs(depot_dir)
+		utils.exec('powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; $z = [System.IO.Compression.ZipFile]::OpenRead(''' .. zip_path .. '''); $e = $z.Entries | Where-Object { $_.Name -match ''\\.manifest$'' }; foreach($f in $e) { $t = [System.IO.Path]::Combine(''' .. depot_dir .. ''', $f.Name); [System.IO.Compression.ZipFileExtensions]::ExtractToFile($f, $t, $true) }; $z.Dispose()"')
+	end)
 
 	pcall(function() os.execute("rmdir /s /q \"" .. temp_dir .. "\"") end)
 
