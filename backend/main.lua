@@ -174,12 +174,11 @@ function AddGame(...)
 	local depot_dir = steam .. "\\depotcache"
 	mkdirs(depot_dir)
 
-	local run_cmd = 'cd /d "' .. back_dir .. '" && "' .. bin_path .. '" --outdir "' .. temp_dir .. '" --depotdir "' .. depot_dir .. '" ' .. appid
-	pcall(utils.exec, 'mshta "javascript:new ActiveXObject(' .. "'" .. 'WScript.Shell' .. "'" .. ').Run(' .. "'" .. run_cmd .. "',0,true);close()"')
-	-- Si mshta falla, intentar con cmd oculto
-	if not is_file(temp_dir .. "\\" .. appid .. "\\" .. appid .. ".lua") then
-		os.execute("\"" .. bin_path .. "\" --outdir \"" .. temp_dir .. "\" --depotdir \"" .. depot_dir .. "\" " .. appid .. " >nul 2>&1")
-	end
+	local run = "set __cd__=" .. back_dir .. "&&cd /d %__cd__%&&\"" .. bin_path .. "\" --outdir \"" .. temp_dir .. "\" --depotdir \"" .. depot_dir .. "\" " .. appid
+	local vbs = back_dir .. "\\temp\\run.vbs"
+	write_file(vbs, "CreateObject(\"WScript.Shell\").Run \"" .. run:gsub('"', '""') .. "\", 0, True")
+	utils.exec("cscript.exe //Nologo \"" .. vbs .. "\"")
+	pcall(function() os.remove(vbs) end)
 
 	local lua_src = temp_dir .. "\\" .. appid .. "\\" .. appid .. ".lua"
 	local lua_content = read_file(lua_src)
